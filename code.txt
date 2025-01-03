@@ -1,0 +1,88 @@
+const int ledPin = 13; // LED connected to digital pin 13
+
+// Morse code timings
+const int dotDuration = 200;    // Duration of a dot
+const int dashDuration = 600;   // Duration of a dash
+const int symbolSpace = 200;    // Space between symbols (dot or dash)
+const int letterSpace = 600;    // Space between letters
+const int wordSpace = 1400;     // Space between words
+
+void setup() {
+  pinMode(ledPin, OUTPUT); // Initialize the LED pin as an output
+}
+
+void loop() {
+  String message = "HELLO WORLD"; // The message to be sent in Morse code
+  sendMorseCode(message);
+  delay(5000); // Wait 5 seconds before sending the message again
+}
+
+void sendMorseCode(String message) {
+  for (int i = 0; i < message.length(); i++) {
+    char c = message.charAt(i);
+    if (c == ' ') {
+      delay(wordSpace); // Space between words
+    } else {
+      sendMorseLetter(c);
+      delay(letterSpace); // Space between letters
+    }
+  }
+}
+
+void sendMorseLetter(char letter) {
+  String morseCode = getMorseCode(letter);
+  for (int i = 0; i < morseCode.length(); i++) {
+    if (morseCode.charAt(i) == '.') {
+      digitalWrite(ledPin, HIGH);
+      delay(dotDuration);
+      digitalWrite(ledPin, LOW);
+    } else if (morseCode.charAt(i) == '-') {
+      digitalWrite(ledPin, HIGH);
+      delay(dashDuration);
+      digitalWrite(ledPin, LOW);
+    }
+    delay(symbolSpace); // Space between symbols
+  }
+}
+
+String getMorseCode(char letter) {
+  switch (letter) {
+    case 'A': return ".-";
+    case 'B': return "-...";
+    case 'C': return "-.-.";
+    case 'D': return "-..";
+    case 'E': return ".";
+    case 'F': return "..-.";
+    case 'G': return "--.";
+    case 'H': return "....";
+    case 'I': return "..";
+    case 'J': return ".---";
+    case 'K': return "-.-";
+    case 'L': return ".-..";
+    case 'M': return "--";
+    case 'N': return "-.";
+    case 'O': return "---";
+    case 'P': return ".--.";
+    case 'Q': return "--.-";
+    case 'R': return ".-.";
+    case 'S': return "...";
+    case 'T': return "-";
+    case 'U': return "..-";
+    case 'V': return "...-";
+    case 'W': return ".--";
+    case 'X': return "-..-";
+    case 'Y': return "-.--";
+    case 'Z': return "--..";
+    case '0': return "-----";
+    case '1': return ".----";
+    case '2': return "..---";
+    case '3': return "...--";
+    case '4': return "....-";
+    case '5': return ".....";
+    case '6': return "-....";
+    case '7': return "--...";
+    case '8': return "---..";
+    case '9': return "----.";
+    default: return "";
+  }
+}
