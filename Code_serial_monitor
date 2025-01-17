@@ -1,0 +1,58 @@
+const int ledPin = 13; // Built-in LED
+const int dotDuration = 200; // Dot duration (ms)
+const int dashDuration = dotDuration * 3; // Dash duration (ms)
+const int gapDuration = dotDuration; // Gap between symbols
+
+const char* morseTable[36] = {
+  ".-", "-...", "-.-.", "-..", ".", "..-.", "--.", "....", "..",  // A-I
+  ".---", "-.-", ".-..", "--", "-.", "---", ".--.", "--.-", ".-.", // J-R
+  "...", "-", "..-", "...-", ".--", "-..-", "-.--", "--..",        // S-Z
+  "-----", ".----", "..---", "...--", "....-", ".....", "-....",   // 0-5
+  "--...", "---..", "----."                                      // 6-9
+};
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+  Serial.println("Enter text to convert to Morse code:");
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    String input = Serial.readStringUntil('\n'); // Reads input until newline
+    input.trim(); // Removes leading/trailing spaces
+    Serial.print("Morse code: ");
+    for (int i = 0; i < input.length(); i++) {
+      char c = toupper(input[i]); // Converts characters to uppercase
+      if (c >= 'A' && c <= 'Z') {
+        printMorse(morseTable[c - 'A']);
+      } else if (c >= '0' && c <= '9') {
+        printMorse(morseTable[c - '0' + 26]);
+      } else if (c == ' ') {
+        delay(dotDuration * 7); // Space between words
+        Serial.print(" / ");
+      }
+    }
+    Serial.println(); // Add a newline after conversion
+  }
+}
+
+void printMorse(const char* morse) {
+  Serial.print(morse);
+  Serial.print(" ");
+  for (int i = 0; morse[i] != '\0'; i++) {
+    if (morse[i] == '.') {
+      blink(dotDuration); // Dot
+    } else if (morse[i] == '-') {
+      blink(dashDuration); // Dash
+    }
+    delay(gapDuration); // Gap between dots/dashes
+  }
+  delay(dotDuration * 3); // Gap between letters
+}
+
+void blink(int duration) {
+  digitalWrite(ledPin, HIGH);
+  delay(duration);
+  digitalWrite(ledPin, LOW);
+}
